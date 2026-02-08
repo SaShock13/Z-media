@@ -4,20 +4,21 @@ public class ArmyFactory
 {
     private readonly UnitFactory _unitFactory;
 
-
     public ArmyFactory(UnitFactory unitFactory)
     {
         _unitFactory = unitFactory;
     }
 
-
-    public ArmyModel Create(int teamId, int count)
+    public ArmyModel Create(int teamId, int count, FormationType formationType)
     {
         var units = new List<UnitModel>(count);
+
         for (int i = 0; i < count; i++)
-            units.Add(_unitFactory.CreateRandom(teamId));
+        {
+            UnitModel unit = _unitFactory.CreateRandom(teamId);
+            units.Add(unit);
+        }
 
-
-        return new ArmyModel(teamId, units);
+        return new ArmyModel(teamId, units, formationType);
     }
 }

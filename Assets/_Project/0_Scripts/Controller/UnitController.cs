@@ -2,12 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// UnitController управляет:
-/// - движением к цели
-/// - таймером атаки
-/// - нанесением урона
-///
-/// Здесь допустима Unity-логика (позиции, дистанции).
+/// UnitController управляет: движением к цели, таймером атаки, нанесением урона
 /// </summary>
 public class UnitController
 {
@@ -44,7 +39,7 @@ public class UnitController
 
         float meleeSqr = MeleeRange * MeleeRange;
 
-        // 1) Если далеко — двигаемся
+        // Если далеко — двигаемся
         if (sqrDist > meleeSqr)
         {
             MoveTowards(dt, targetPos);
@@ -52,9 +47,10 @@ public class UnitController
             return;
         }
 
-        // 2) Если рядом — атакуем 
+        // Если рядом — поворачиваемся 
         FaceTo(targetPos);
 
+        // Если кулдаун закончился — атакуем
         _attackCooldown -= dt;
         if (_attackCooldown <= 0f)
         {

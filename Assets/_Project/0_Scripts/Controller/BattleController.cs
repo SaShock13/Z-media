@@ -19,9 +19,13 @@ public class BattleController : MonoBehaviour
     [SerializeField] private int unitsPerArmy = 20;
     [SerializeField] private float spacing = 1.5f;
 
+    [SerializeField] private FormationUI _formationUI;
+
     private BattleModel _battle;
     private ArmyModel _armyA;
     private ArmyModel _armyB;
+    private ArmyController _armyAController;
+    private ArmyController _armyBController;
 
     private readonly Dictionary<int, UnitController> _unitControllers = new();
 
@@ -70,14 +74,25 @@ public class BattleController : MonoBehaviour
         var unitFactory = new UnitFactory(unitDatabase, seed);
         var armyFactory = new ArmyFactory(unitFactory);
 
-        _armyA = armyFactory.Create(teamId: 0, count: unitsPerArmy);
-        _armyB = armyFactory.Create(teamId: 1, count: unitsPerArmy);
+
+        _armyA = armyFactory.Create(teamId: 0, count: unitsPerArmy,FormationType.Chaotic);
+        _armyB = armyFactory.Create(teamId: 1, count: unitsPerArmy, FormationType.Wedge);
+
+        _formationUI.Bind(_armyA, _armyB);
 
         _battle = new BattleModel(_armyA, _armyB);
         _battle.BattleFinished += OnBattleFinished;
 
-        SpawnArmy(_armyA, armyASpawnRoot, facingX: +1f);
-        SpawnArmy(_armyB, armyBSpawnRoot, facingX: -1f);
+        SpawnArmy(_armyA, armyASpawnRoot, buildSideX: -1f, facingX: +1f);
+        SpawnArmy(_armyB, armyBSpawnRoot, buildSideX: +1f, facingX: -1f);
+
+        _armyAController = new ArmyController(_armyA, _teamA, armyASpawnRoot, spacing, +1f);
+        _armyBController = new ArmyController(_armyB, _teamB, armyBSpawnRoot, spacing, -1f);
+
+        // Применить формации сразу
+        _armyAController.ApplyFormation(_armyA.Formation);
+        _armyBController.ApplyFormation(_armyB.Formation);
+
     }
 
     private void OnArmyDefeated(ArmyModel model)
@@ -85,8 +100,10 @@ public class BattleController : MonoBehaviour
         OnBattleFinished(model.TeamId);
     }
 
-    private void SpawnArmy(ArmyModel army, Transform root, float facingX)
+    private void SpawnArmy(ArmyModel army, Transform root, float buildSideX, float facingX)
     {
+        IFormation formation = FormationFactory.Create(army.Formation);
+
         for (int i = 0; i < army.Units.Count; i++)
         {
             UnitModel model = army.Units[i];
@@ -97,15 +114,14 @@ public class BattleController : MonoBehaviour
 
             UnitView view = Instantiate(prefab, root);
 
-            // --- 2D позиция: XY, Z = 0 ---
-            int row = i / 5;
-            int col = i % 5;
 
-            Vector3 pos = root.position + new Vector3(col * spacing, -row * spacing, 0f);
-            view.transform.position = pos;
+            // позиция из формации
+            Vector3 localPos = formation.GetLocalPosition(i, army.Units.Count, spacing, buildSideX);
 
-            // --- ВАЖНО: в 2D не крутим forward ---
+
+            view.transform.position = root.position + localPos;
             view.transform.rotation = Quaternion.identity;
+
 
             // внешний вид
             view.SetColor(model.Color.ViewColor);
@@ -124,7 +140,7 @@ public class BattleController : MonoBehaviour
     }
 
     /// <summary>
-    /// Очисить армии
+    /// Очистить армии
     /// </summary>
     private void ClearBattle()
     {
@@ -187,11 +203,11 @@ public class BattleController : MonoBehaviour
                 toRemove.Add(kv.Key);
             }
         }
-
+        // todo оптимизировать
         foreach (int id in toRemove)
             _unitControllers.Remove(id);
 
-        // проверка победы
+        // проверка поражения
         _armyA.CheckDefeat();
         _armyB.CheckDefeat();
     }

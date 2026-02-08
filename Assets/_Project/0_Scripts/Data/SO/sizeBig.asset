@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: sizeBig
   m_EditorClassIdentifier: 
   Id: sizeBig
-  ViewScale: {x: 1.2, y: 1.2, z: 1.2}
+  ViewScale: {x: 0.5, y: 0.5, z: 0.5}
   HpDelta: 50
   AtkDelta: 0
   SpeedDelta: 0
