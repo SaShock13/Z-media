@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
-
+/// <summary>
+/// Хаотичная формация
+/// </summary>
 public class ChaoticFormation : IFormation
 {
     private readonly float width;

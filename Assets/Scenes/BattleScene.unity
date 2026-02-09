@@ -659,7 +659,7 @@ GameObject:
   - component: {fileID: 404569119}
   - component: {fileID: 404569118}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: StatBAttleButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1101,8 +1101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitDatabase: {fileID: 11400000, guid: 7edaab98d55d85141baceca78a85e92c, type: 2}
-  cubePrefab: {fileID: 7726287607597092132, guid: 9ff53723b29211c48802abddecaf59f5, type: 3}
-  spherePrefab: {fileID: 8865201227288780952, guid: b22ea33e4438b2742b2ab265d8bd3d2c, type: 3}
+  defaultPrefab: {fileID: 8865201227288780952, guid: b22ea33e4438b2742b2ab265d8bd3d2c, type: 3}
   armyASpawnRoot: {fileID: 309779473}
   armyBSpawnRoot: {fileID: 1445081329}
   unitsPerArmy: 20
@@ -3241,7 +3240,7 @@ GameObject:
   - component: {fileID: 2095464354}
   - component: {fileID: 2095464353}
   m_Layer: 5
-  m_Name: Button
+  m_Name: RndButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

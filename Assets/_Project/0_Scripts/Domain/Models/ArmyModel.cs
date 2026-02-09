@@ -9,7 +9,6 @@ public class ArmyModel
 {
     public int TeamId { get; }
     public List<UnitModel> Units { get; }
-
     //  Формация армии 
     public FormationType Formation { get; private set; }
 

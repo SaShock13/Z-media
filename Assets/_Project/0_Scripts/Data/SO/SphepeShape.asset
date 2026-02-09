@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SphepeShape
   m_EditorClassIdentifier: 
   Id: SphepeShape
-  PrefabType: 1
+  Prefab: {fileID: 8865201227288780952, guid: b22ea33e4438b2742b2ab265d8bd3d2c, type: 3}
   HpDelta: 50
   AtkDelta: 20
   SpeedDelta: 0

@@ -22,13 +22,11 @@ public class FormationUI : MonoBehaviour
     {
         _armyA = armyA;
         _armyB = armyB;
-
         // Army A
         aLine.onClick.AddListener(() => _armyA.SetFormation(FormationType.Line));
         aBox.onClick.AddListener(() => _armyA.SetFormation(FormationType.Box));
         aWedge.onClick.AddListener(() => _armyA.SetFormation(FormationType.Wedge));
         aChaotic.onClick.AddListener(() => _armyA.SetFormation(FormationType.Chaotic));
-
         // Army B
         bLine.onClick.AddListener(() => _armyB.SetFormation(FormationType.Line));
         bBox.onClick.AddListener(() => _armyB.SetFormation(FormationType.Box));
@@ -38,12 +36,10 @@ public class FormationUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Чисто чтобы не оставлять подписки, если UI уничтожается.
         aLine.onClick.RemoveAllListeners();
         aBox.onClick.RemoveAllListeners();
         aWedge.onClick.RemoveAllListeners();
         aChaotic.onClick.RemoveAllListeners();
-
         bLine.onClick.RemoveAllListeners();
         bBox.onClick.RemoveAllListeners();
         bWedge.onClick.RemoveAllListeners();

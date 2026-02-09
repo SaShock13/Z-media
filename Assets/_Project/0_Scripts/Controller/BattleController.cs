@@ -10,8 +10,7 @@ public class BattleController : MonoBehaviour
     [SerializeField] private UnitDatabaseSO unitDatabase;
 
     [Header("Prefabs")]
-    [SerializeField] private UnitView cubePrefab;
-    [SerializeField] private UnitView spherePrefab;
+    [SerializeField] private UnitView defaultPrefab;
 
     [Header("Spawn")]
     [SerializeField] private Transform armyASpawnRoot;
@@ -19,6 +18,7 @@ public class BattleController : MonoBehaviour
     [SerializeField] private int unitsPerArmy = 20;
     [SerializeField] private float spacing = 1.5f;
 
+    [Header("UI")]
     [SerializeField] private FormationUI _formationUI;
 
     private BattleModel _battle;
@@ -28,7 +28,6 @@ public class BattleController : MonoBehaviour
     private ArmyController _armyBController;
 
     private readonly Dictionary<int, UnitController> _unitControllers = new();
-
     private readonly List<UnitController> _teamA = new();
     private readonly List<UnitController> _teamB = new();
 
@@ -36,31 +35,9 @@ public class BattleController : MonoBehaviour
 
     public event Action<ArmyModel> ArmyDefeated;
 
-
-    private void Update()
-    {
-        // Тестирование нанесения урона
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            foreach (var unit in _armyA.Units)
-            {
-
-                Debug.Log($"HEalth of {unit.Id} before {unit.Stats.CurrentHP}");
-                unit.Stats.TakeDamage(20);
-                Debug.Log($"HEalth after {unit.Stats.CurrentHP}");
-            }
-            // Второй проход по тем же юнитам — изменились ли они по-настоящему?
-            Debug.Log("=== Second pass (real state in list) ===");
-            foreach (var unit in _armyA.Units)
-                Debug.Log($"Unit {unit.Id} CurrentHP = {unit.Stats.CurrentHP}");
-        }
-
-    }
-
     private void Start()
     {
         CreateBattle(seed: System.Environment.TickCount);
-        //StartBattle();
     }
 
     public void StartBattle()
@@ -70,14 +47,18 @@ public class BattleController : MonoBehaviour
 
     public void CreateBattle(int seed)
     {
+        // Сохраняем выбранные формации до очистки , для рандомизации
+        FormationType formationA = _armyA != null ? _armyA.Formation : FormationType.Chaotic;
+        FormationType formationB = _armyB != null ? _armyB.Formation : FormationType.Wedge;
+
         ClearBattle();
         var unitFactory = new UnitFactory(unitDatabase, seed);
         var armyFactory = new ArmyFactory(unitFactory);
 
+        _armyA = armyFactory.Create(teamId: 0, count: unitsPerArmy, formationA);
+        _armyB = armyFactory.Create(teamId: 1, count: unitsPerArmy, formationB);
 
-        _armyA = armyFactory.Create(teamId: 0, count: unitsPerArmy,FormationType.Chaotic);
-        _armyB = armyFactory.Create(teamId: 1, count: unitsPerArmy, FormationType.Wedge);
-
+        // Прявязка армий к UI
         _formationUI.Bind(_armyA, _armyB);
 
         _battle = new BattleModel(_armyA, _armyB);
@@ -106,18 +87,19 @@ public class BattleController : MonoBehaviour
 
         for (int i = 0; i < army.Units.Count; i++)
         {
-            UnitModel model = army.Units[i];
+            UnitModel model = army.Units[i];            
 
-            UnitView prefab = model.Shape.PrefabType == ShapePrefabType.Cube
-                ? cubePrefab
-                : spherePrefab;
+            UnitView prefab = model.Shape.Prefab != null ? model.Shape.Prefab : defaultPrefab;
+            if (prefab == null)
+            {
+                Debug.LogError($"Shape '{model.Shape.name}' has no Prefab , and no default prefab set.", model.Shape);
+                continue;
+            }
 
             UnitView view = Instantiate(prefab, root);
 
-
             // позиция из формации
             Vector3 localPos = formation.GetLocalPosition(i, army.Units.Count, spacing, buildSideX);
-
 
             view.transform.position = root.position + localPos;
             view.transform.rotation = Quaternion.identity;
@@ -144,11 +126,11 @@ public class BattleController : MonoBehaviour
     /// </summary>
     private void ClearBattle()
     {
-        //удалить старые объекты со сцены
+        // удалить старые объекты со сцены
         ClearChildren(armyASpawnRoot);
         ClearChildren(armyBSpawnRoot);
 
-        // 2) очистить контроллеры
+        // очистить контроллеры
         _unitControllers.Clear();
         _teamA.Clear();
         _teamB.Clear();
@@ -172,10 +154,6 @@ public class BattleController : MonoBehaviour
 
         while (_battleRunning)
         {
-            //foreach (var kv in _unitControllers)
-            //{
-            //    kv.Value.Tick(Time.deltaTime, _armyA, _armyB);
-            //}
             float dt = Time.deltaTime;
 
             for (int i = 0; i < _teamA.Count; i++)
@@ -192,7 +170,7 @@ public class BattleController : MonoBehaviour
 
     private void CleanupDeadUnits()
     {
-        // удаляем view + controller, но model остаётся в армии (AliveCount считает по Stats.IsDead)
+        // удаляем view + controller, но model остаётся в армии 
         var toRemove = new List<int>();
 
         foreach (var kv in _unitControllers)

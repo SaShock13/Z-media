@@ -8,7 +8,6 @@ public class UnitBaseStatsSO : ScriptableObject
     public float BaseSPEED = 10f;
     public float BaseATKSPD = 1f;
 
-
     public Stats CreateStats()
     {
         return new Stats

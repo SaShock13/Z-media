@@ -1,5 +1,7 @@
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
+/// <summary>
+/// Фабрика армии - создает юнитов через фабрики , добавляет в армию и ее возвращает
+/// </summary>
 public class ArmyFactory
 {
     private readonly UnitFactory _unitFactory;
@@ -18,7 +20,6 @@ public class ArmyFactory
             UnitModel unit = _unitFactory.CreateRandom(teamId);
             units.Add(unit);
         }
-
         return new ArmyModel(teamId, units, formationType);
     }
 }

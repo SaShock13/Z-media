@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CubeShape
   m_EditorClassIdentifier: 
   Id: CubeShape
-  PrefabType: 0
+  Prefab: {fileID: 7726287607597092132, guid: 9ff53723b29211c48802abddecaf59f5, type: 3}
   HpDelta: 100
   AtkDelta: 10
   SpeedDelta: 0

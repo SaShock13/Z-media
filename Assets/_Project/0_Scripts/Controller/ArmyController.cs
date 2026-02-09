@@ -9,19 +9,13 @@ public class ArmyController : MonoBehaviour
     private readonly float _spacing;
     private readonly float _facingX;
 
-    public ArmyController(
-        ArmyModel army,
-        List<UnitController> unitControllers,
-        Transform root,
-        float spacing,
-        float facingX)
+    public ArmyController( ArmyModel army, List<UnitController> unitControllers, Transform root, float spacing, float facingX)
     {
         _army = army;
         _units = unitControllers;
         _root = root;
         _spacing = spacing;
         _facingX = facingX;
-
         _army.FormationChanged += OnFormationChanged;
     }
 

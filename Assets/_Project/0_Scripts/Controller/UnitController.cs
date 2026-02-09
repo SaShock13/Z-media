@@ -1,16 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// UnitController управляет: движением к цели, таймером атаки, нанесением урона
-/// </summary>
 public class UnitController
 {
     public UnitModel Model { get; }
     public UnitView View { get; }
-
     private float _attackCooldown;
-
     // дистанция атаки
     private const float MeleeRange = 0.75f;
 
@@ -62,16 +57,12 @@ public class UnitController
     private void MoveTowards(float dt, Vector3 targetPos)
     {
         Vector3 myPos = View.transform.position;
-
         Vector3 dir = targetPos - myPos;
         dir.z = 0f;
-
         float dist = dir.magnitude;
         if (dist < 0.001f)
             return;
-
         dir /= dist;
-
         float step = Model.Stats.SPEED * dt;
 
         // чтобы не перелетать цель
@@ -84,10 +75,8 @@ public class UnitController
     private void FaceTo(Vector3 targetPos)
     {
         float dx = targetPos.x - View.transform.position.x;
-
         if (Mathf.Abs(dx) < 0.0001f)
             return;
-
         Vector3 s = View.transform.localScale;
         s.x = Mathf.Abs(s.x) * (dx > 0f ? 1f : -1f);
         View.transform.localScale = s;
