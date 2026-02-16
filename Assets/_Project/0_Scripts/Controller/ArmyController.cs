@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArmyController : MonoBehaviour
+public class ArmyController 
 {
     private readonly ArmyModel _army;
     private readonly List<UnitController> _units;

@@ -33,7 +33,6 @@ public class BattleController : MonoBehaviour
 
     private bool _battleRunning;
 
-    public event Action<ArmyModel> ArmyDefeated;
 
     private void Start()
     {
